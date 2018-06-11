@@ -9,8 +9,11 @@ import java.util.Hashtable;
 import java.util.Set;
 
 /**
- * TODO Beschreibung NEU
+ * Persistenzmanager sichert die Persistenz der Transaktionen
  * 
+ * @param manager Manager
+ * @param currentTAiD die aktuelle Transaktions-ID
+ * @return manager den Persistenzmanager
  */
 
 public class PersistanceManager {
@@ -110,9 +113,12 @@ public class PersistanceManager {
 		return new Transaction(currentTAid);
 	}
 
-	// TODO Methode wurde nicht nach der Aufgabestellung implementiert
-	// commit(int taid): commits the transaction speci ed by the given transaction
-	// ID.
+	/**
+	 * Methode wurde nicht nach der Aufgabestellung implementiert
+	 * commit(int taid): Committed die Transaktion anhand der @link taid 
+	 * ID.
+	 * @param ta
+	 */
 	public synchronized void commit(Transaction ta) {
 
 		// commit the given transaction
@@ -182,9 +188,10 @@ public class PersistanceManager {
 	}
 
 	/**
-	 * TODO Beschreibung
+	 * Sorgt für das Schreiben der PageID, LSN und TAID in die Page-Files.
 	 * 
 	 * @param page
+	 * 
 	 */
 	private synchronized void savePage(Page page) {
 
@@ -214,9 +221,7 @@ public class PersistanceManager {
 	}
 
 	/**
-	 * TODO - Beschreibung This method logs all writing actions. There is another
-	 * log method used for BOT and Write. Both methods are the same apart from the
-	 * given parameters.
+	 * Diese Methode sorgt für das Loggin aller geschriebenen Transakationen. 
 	 * 
 	 * @param taId
 	 * @param RecordType
@@ -258,9 +263,7 @@ public class PersistanceManager {
 	}
 
 	/**
-	 * TODO - Beschreibung This method is used for the logging of BOT and Commit
-	 * actions. There is another log method for Writing actions which is the same
-	 * apart from the given parameters.
+	 * @method log wird genutzt, um das Loggin der BOT und der commits auszuführen. 
 	 * 
 	 * @param taId
 	 * @param type
@@ -305,10 +308,10 @@ public class PersistanceManager {
 	}
 
 	/**
-	 * TODO Beschreibung
+	 * Die Crash recovery vergleicht die PageIDs aus den LogData anhand der zuletzt ausgeführten Commits. 
+	 * Sind im Buffer Commits vorhanden, die noch nicht persistent gemacht wurden, 
+	 * läuft die Crash Recovery ab und führt die Transaktionen erneut aus.
 	 */
-	// PageID in LogData berГјcksichtigen und dann erst fГјr eine bestimmte Page die
-	// LSNs vergleichen.
 	public void crashRecovery() {
 
 		// Winner TAs sind diejenige, fГјr die ein Commit angestossen wurde
@@ -321,13 +324,11 @@ public class PersistanceManager {
 	}
 
 	/**
-	 * TODO - Beschreibung Г¤ndern Reads all of the logs in order to determine which
-	 * of the logged transactions have been committed
+	 * Liest alle Daten aus dem Log um herauszufinden, 
+	 * welche geloggte Transaktionen auch comitted sind.
 	 * 
-	 * @return all of those transaction's ids
+	 * @return transactionIDs
 	 */
-	// PageID in LogData berГјcksichtigen und dann erst fГјr eine bestimmte Page die
-	// LSNs vergleichen.
 	private Integer[] checkWinnerTaIds() {
 
 		BufferedReader reader = null;
@@ -368,7 +369,7 @@ public class PersistanceManager {
 	}
 
 	/**
-	 * TODO Beschreibung
+	 * Ermittelt die Winner-Transaktionen anhand der Einträge im Logfile
 	 * 
 	 * @param winnerTaIds
 	 */
@@ -427,17 +428,15 @@ public class PersistanceManager {
 	}
 
 	/**
-	 * TODO - Beschreibung Г¤ndern return true, wenn LSN > ist als Pagelsn. In
-	 * diesem Fall muss ein redo gemacht werden.
 	 * 
-	 * returns true if LSN is smaller than PageLsn -> in this case the write action
-	 * does not have to be redone; And returns false in case the operation has to be
-	 * redone;
+	 * Returnt true, wenn LSN > als die PageLSN ist. Ist das der Fall, 
+	 * muss ein Redo der Transaktion ausgeführt werdne.
 	 * 
 	 * @param lsn
 	 * @param pageId
 	 * @return
 	 */
+
 	private boolean compareLSNWithPageLSN(int lsn, int pageId) {
 
 		BufferedReader reader = null;
@@ -466,7 +465,7 @@ public class PersistanceManager {
 	}
 
 	/**
-	 * TODO Beschreibung
+	 * Führt den Redo aus und schreibt die Transaktion in der Page neu
 	 * 
 	 * @param values
 	 */
