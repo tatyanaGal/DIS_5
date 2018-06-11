@@ -20,6 +20,10 @@ public class Page {
 	public Transaction getTransaction() {
 		return transaction;
 	}
+	
+	public void setTransaction(Transaction ta) {
+		this.transaction=ta;
+	}
 
 	public int getLsn() {
 		return lsn;

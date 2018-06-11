@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Set;
 
 /**
  * TODO Beschreibung
@@ -34,7 +35,7 @@ public class PersistanceManager {
 
 	private int currentTAid = 0;
 	private int lsn = 0; // Log sequence number
-	private Hashtable<Integer, Page> buffer = new Hashtable<Integer, Page>(); // for buffer
+	private Hashtable<Integer, Page> buffer = new Hashtable<Integer, Page>(); // for buffer (int=PageID; Page)
 
 	static {
 		try {
@@ -136,20 +137,39 @@ public class PersistanceManager {
 	 */
 	public synchronized void write(Transaction ta, int pageId, String data) {
 
+		int i;
+		Boolean modified=false;
 		incrementLSN();
 
-		log(ta.getTaId(), RecordType.WRITE, pageId, data);
+		// update Pages im Buffer, wenn sie da zurzeit vorhanden ist
+		Set<Integer> keys = buffer.keySet();
+        for(int key: keys){
+        	if (key==pageId) {
+        		buffer.get(key).setTransaction(ta);
+        		buffer.get(key).setPageId(pageId);
+        		buffer.get(key).setData(data);
+        		buffer.get(key).setLsn(lsn);
+        		log(ta.getTaId(), RecordType.WRITE, pageId, "Veraenderter "+data);
+        		modified=true;
+        	}
+        }
 
-		Page page = new Page(pageId, lsn, data, ta);
-		buffer.put(pageId, page);
+        // Wenn die Page nicht im Buffer vorhanden ist, wird ein neues Datensatz im Buffer angelegt
+        if (!modified) {
+        	log(ta.getTaId(), RecordType.WRITE, pageId, data);
+
+    		Page page = new Page(pageId, lsn, data, ta);
+    		buffer.put(pageId, page);
+        }
+		
 		System.out.println("Buffer-Groesse: " + buffer.size());
 
-		// TODO TODO Es werden keine TAs gespeichert, wenn der buffer ГјberfГјllt ist
+		// TODO TODO
 		// Was passiert, wenn es mehr als 5 datensГ¤tze im Buffer
 		// gespeichert werden und keine davon ist commitet
 		if (buffer.size() > 5) {
 			Object[] allValues = buffer.values().toArray();
-			for (int i = 0; i < allValues.length; i++) {
+			for (i = 0; i < allValues.length; i++) {
 				Page currentPage = (Page) allValues[i];
 				if (currentPage.checkCommit()) {
 					savePage(currentPage);
@@ -407,8 +427,8 @@ public class PersistanceManager {
 	}
 
 	/**
-	 * TODO - Beschreibung Г¤ndern return true, wenn LSN > ist als Pagelsn. In diesem
-	 * Fall muss ein redo gemacht werden.
+	 * TODO - Beschreibung Г¤ndern return true, wenn LSN > ist als Pagelsn. In
+	 * diesem Fall muss ein redo gemacht werden.
 	 * 
 	 * returns true if LSN is smaller than PageLsn -> in this case the write action
 	 * does not have to be redone; And returns false in case the operation has to be
@@ -466,7 +486,7 @@ public class PersistanceManager {
 			writer.write("TAID:" + ta + ",");
 			writer.write("Data:" + data);
 
-			System.out.println("REDO: " + "\nPageID " + pageId + ",LSN " + newLSN + ",TAID " + ta + ",Data: " + data
+			System.out.println("REDO: " + "\nPageID " + pageId + ",LSN " + newLSN + ",TAID " + ta + "Data: " + data
 					+ "\n...................");
 
 		} catch (IOException e) {
