@@ -198,8 +198,8 @@ public class PersistanceManager {
 
 			writer.write("Data:" + page.getData());
 
-			System.out.println("Gespeichert: " + "\nPageID " + page.getPageId() + "\nLSN " + page.getLsn() + "\nTAID "
-					+ page.getTransaction().getTaId() + "\nData: " + page.getData() + "\n.......................");
+			System.out.println("Gespeichert: " + "\nPageID " + page.getPageId() + ",LSN " + page.getLsn() + ",TAID "
+					+ page.getTransaction().getTaId() + ",Data: " + page.getData() + "\n.......................");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -236,7 +236,7 @@ public class PersistanceManager {
 			if (type == RecordType.WRITE) {
 				writer.write("Data:" + data + ",");
 				writer.write("PageID:" + pageId);
-				System.out.println("LOG: " + "\nPageID " + pageId + "\nLSN " + lsn + "\nTAID " + taId + "\nData: "
+				System.out.println("LOG: " + "\nPageID " + pageId + ",LSN " + lsn + ",TAID " + taId + ",Data: "
 						+ data + "\n....................................");
 			} else {
 				System.err.println("Es wurde falsche Log-Methode verwendet.");
@@ -277,13 +277,13 @@ public class PersistanceManager {
 
 			if (type == RecordType.COMMIT) {
 				writer.write("Data:committed");
-				System.out.println("LOG: " + "\nLSN " + lsn + "\nTAID " + taId
-						+ "\nCOMMITTED\n.....................................");
+				System.out.println("LOG: " + "\nLSN " + lsn + ",TAID " + taId
+						+ ",COMMITTED\n.....................................");
 
 			} else if (type == RecordType.BEGINOFTA) {
 				writer.write("Data:BOT");
-				System.out.println("LOG: " + "\nLSN " + lsn + "\nTAID " + taId
-						+ "\nBEGIN OF TRANSACTION \n....................................");
+				System.out.println("LOG: " + "\nLSN " + lsn + ",TAID " + taId
+						+ ",BEGIN OF TRANSACTION \n....................................");
 			} else {
 				System.err.println("Es wurde falsche Log-Methode verwendet.");
 			}
@@ -486,8 +486,8 @@ public class PersistanceManager {
 			writer.write("TAID:" + ta + ",");
 			writer.write("Data:" + data);
 
-			System.out.println("REDO: " + "\nPageID " + pageId + ",LSN " + newLSN + ",TAID " + ta + "Data: " + data
-					+ "\n...................");
+			System.out.println("REDO: " + "\nPageID " + pageId + ",LSN " + newLSN + ",TAID " + ta + ",Data: " + data
+					+ "\n....................................");
 
 		} catch (IOException e) {
 			e.printStackTrace();
