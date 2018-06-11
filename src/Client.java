@@ -19,6 +19,15 @@ import java.util.Random;
 //	
 //	
 
+/**
+ * Die Client-Klasse kann parallel in mehreren Instanzen gestartet werden.
+ * Alle Instanzen greifen nacheinander auf den Persistenzmanager zu. 
+ * Schema: beginTransaction() write() write() ... commit()
+ * 
+ * @link clientID : Die Client-Identifikationsnummer
+ * @link firstPage : Die erste Seite angelegte Seite
+ * @link lastPage : Die zuletzt angelegte Seite
+ */
 public class Client extends Thread {
 
 	private int clientID;
@@ -33,6 +42,12 @@ public class Client extends Thread {
 		this.lastPage = firstPage + 9;
 	}
 
+	/**
+	 * Lässt den CLient starten und schreibt die 
+	 * Einträge für die erzeugten Clients für die @link firstPage und @link lastPage auf die Konsole
+	 * 
+	 * 
+	 */
 	public void run() {
 
 		int counter = firstPage;

@@ -4,7 +4,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
- * TODO Beschreibung
+ * Der DB Instruktor erzeugt mehrere Clients, die Transaktionen in unserer lokalen Datenbank (Buffer) auslösen.
+ * Die Buffergröße beträgt 5 Commits, danach folt ein Commmit-Force der bereits bestätigten Transaktionen.
  */
 
 public class Main {
@@ -50,6 +51,11 @@ public class Main {
 
 	}
 
+	/**
+	 * Erzeugt die Clients in einer Liste als Array
+	 * @param clientsAmount
+	 * @return Client[]
+	 */
 	private static Client[] createClients(int clientsAmount) {
 
 		ArrayList<Client> clientList = new ArrayList<Client>();
@@ -74,6 +80,11 @@ public class Main {
 	// }
 	// }
 	//
+	
+	/**
+	 * Startet die Clients für übergebene Client-Liste
+	 * @param clients
+	 */
 	private static void startClients(Client[] clients) {
 
 		for (int i = 0; i < clients.length; i++) {

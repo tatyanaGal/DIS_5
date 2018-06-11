@@ -1,5 +1,8 @@
-/*
- * TODO Beschreibung
+/**
+ * Die Pages nehmen die Einträge für pageID , Log Sequenze Number (LSN) , die Daten und Transaktionen auf
+ * 
+ * @author elsen, galitskaya
+ *
  */
 public class Page {
 

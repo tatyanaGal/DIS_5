@@ -1,5 +1,9 @@
-/*
- * TODO Beschreibung
+/**
+ * Hier werden die Transaktionen gemanaged. 
+ * Eine TA kann einenCommit aufnehmen und eine taID aufweisen.
+ * 
+ * @link taID = TransaktionsID
+ * @link committed = Gibt an, ob die TA committed wurde.
  */
 public class Transaction {
 
@@ -26,18 +30,17 @@ public class Transaction {
 		this.taId = taId;
 	}
 
-	// TODO Sinnvoll?? Ja, weil ein write von der TA angestossen werden muss.
+	/**
+	 * Führt einen Write in der TA durch
+	 * @param pageId
+	 * @param data
+	 */
 	public void write(int pageId, String data) {
-
 		PersistanceManager.getInstance().write(this, pageId, data);
 	}
 
-	// TODO Sinnvoll??
+	
 	public void setCommitted() {
-
-		// if (!committed) {
-		// committed = true;
-		// }
 		this.committed = true;
 	}
 
