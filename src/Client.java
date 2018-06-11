@@ -50,9 +50,9 @@ public class Client extends Thread {
 				for (i = 0; i <= randomNumber.nextInt(4); i++) {
 					actualPage = clientID * 10 + randomNumber.nextInt(10);
 
-					System.err.println("ClientID: " + this.clientID + "\n");
+					//System.err.println("ClientID: " + this.clientID + "\n");
 					currentTA.write(actualPage, "Eintrag fuer TA " + currentTA.getTaId() + " wurde um "
-							+ sdf.format(new Date()) + " vom Client"+ this.clientID +" erzeugt");
+							+ sdf.format(new Date()).replaceAll(":", "/") + " vom Client"+ this.clientID +" erzeugt");
 					Client.sleep(1000);
 				}
 

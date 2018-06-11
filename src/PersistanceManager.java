@@ -30,14 +30,12 @@ public class PersistanceManager {
 	// }
 	// }
 
-	/// OLD private static PersistanceManager manager = new PersistanceManager();
 	static final private PersistanceManager manager;
 
 	private int currentTAid = 0;
 	private int lsn = 0; // Log sequence number
 	private Hashtable<Integer, Page> buffer = new Hashtable<Integer, Page>(); // for buffer
 
-	// new
 	static {
 		try {
 			manager = new PersistanceManager();
@@ -59,12 +57,14 @@ public class PersistanceManager {
 			while ((line = reader.readLine()) != null) {
 				last = line;
 			}
-			characters = last.split("\\,");
+			characters = last.split(",");
 
-			this.lsn = Integer.parseInt(characters[0].split("\\:")[1]);
+			this.lsn = Integer.parseInt(characters[0].split(":")[1]);
+			this.currentTAid = Integer.parseInt(characters[1].split(":")[1]);
 
 		} catch (FileNotFoundException e) {
 			this.lsn = 0;
+			this.currentTAid = 0;
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 			return;
@@ -142,10 +142,10 @@ public class PersistanceManager {
 
 		Page page = new Page(pageId, lsn, data, ta);
 		buffer.put(pageId, page);
-		System.out.println("Buffer-Größe: " + buffer.size());
+		System.out.println("Buffer-Groesse: " + buffer.size());
 
-		// TODO TODO Es werden keine TAs gespeichert, wenn der buffer überfüllt ist
-		// Was passiert, wenn es mehr als 5 datensätze im Buffer
+		// TODO TODO Es werden keine TAs gespeichert, wenn der buffer ГјberfГјllt ist
+		// Was passiert, wenn es mehr als 5 datensГ¤tze im Buffer
 		// gespeichert werden und keine davon ist commitet
 		if (buffer.size() > 5) {
 			Object[] allValues = buffer.values().toArray();
@@ -172,7 +172,7 @@ public class PersistanceManager {
 
 		try {
 			writer = new FileWriter("Page" + page.getPageId());
-			writer.write("PageID:" + Integer.toString(page.getLsn()) + ",");
+			writer.write("PageID:" + Integer.toString(page.getPageId()) + ",");
 			writer.write("LSN:" + Integer.toString(page.getLsn()) + ",");
 			writer.write("TAID:" + Integer.toString(page.getTransaction().getTaId()) + ",");
 
@@ -287,11 +287,11 @@ public class PersistanceManager {
 	/**
 	 * TODO Beschreibung
 	 */
-	// PageID in LogData berücksichtigen und dann erst für eine bestimmte Page die
+	// PageID in LogData berГјcksichtigen und dann erst fГјr eine bestimmte Page die
 	// LSNs vergleichen.
 	public void crashRecovery() {
 
-		// Winner TAs sind diejenige, für die ein Commit angestossen wurde
+		// Winner TAs sind diejenige, fГјr die ein Commit angestossen wurde
 		Integer[] winnerTAs = checkWinnerTaIds();
 		if (winnerTAs != null) {
 			redoTransactions(winnerTAs);
@@ -301,12 +301,12 @@ public class PersistanceManager {
 	}
 
 	/**
-	 * TODO - Beschreibung ändern Reads all of the logs in order to determine which
+	 * TODO - Beschreibung Г¤ndern Reads all of the logs in order to determine which
 	 * of the logged transactions have been committed
 	 * 
 	 * @return all of those transaction's ids
 	 */
-	// PageID in LogData berücksichtigen und dann erst für eine bestimmte Page die
+	// PageID in LogData berГјcksichtigen und dann erst fГјr eine bestimmte Page die
 	// LSNs vergleichen.
 	private Integer[] checkWinnerTaIds() {
 
@@ -320,16 +320,16 @@ public class PersistanceManager {
 
 			while (line != null) {
 
-				values = line.split("\\,");
+				values = line.split(",");
 
-				if ((values[2].split("\\:")[1]) == "committed") {
-					winnerTas.add(Integer.parseInt(values[1].split("\\:")[1]));
+				if ((values[2].split(":")[1]).equalsIgnoreCase("committed")) {
+					winnerTas.add(Integer.parseInt(values[1].split(":")[1]));
 				}
 				line = reader.readLine();
 			}
 
 		} catch (FileNotFoundException e) {
-			System.err.println("Es wurde keine LogData-Datei gefunden.\nCrash Recovery kann nicht ausgeführt werden!");
+			System.err.println("Es wurde keine LogData-Datei gefunden.\nCrash Recovery kann nicht ausgefuehrt werden!");
 			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -363,24 +363,24 @@ public class PersistanceManager {
 			int counter = 0;
 
 			while (line != null) {
-				values = line.split("\\,");
+				values = line.split(",");
 
-				// Parst die ganze Log-Datei und sucht sich write-Einträge aus (Länge 4)
+				// Parst die ganze Log-Datei und sucht sich write-Eintraege aus (Laenge 4)
 				if (values.length != 3) {
 
 					for (int currentTaId : winnerTaIds) {
 
 						// Vergleiche TAid aus Log-Datei mit TAid von WinnerTAIds
-						if (currentTaId == Integer.parseInt(values[1].split("\\:")[1])) {
+						if (currentTaId == Integer.parseInt(values[1].split(":")[1])) {
 
 							// vergleiche write-LSN mit LSN-EIntrag in der Page mit entsprechende PageID
-							if (compareLSNWithPageLSN(Integer.parseInt(values[0].split("\\:")[1]),
-									Integer.parseInt(values[3].split("\\:")[1]))) {
+							if (compareLSNWithPageLSN(Integer.parseInt(values[0].split(":")[1]),
+									Integer.parseInt(values[3].split(":")[1]))) {
 
 								// mache REDO
 								redoWrite(values);
 
-								// zum Checken, ob überhaupt ein REDO durchgeführt wurde
+								// zum Checken, ob ueberhaupt ein REDO durchgefuehrt wurde
 								counter++;
 							}
 						}
@@ -389,7 +389,7 @@ public class PersistanceManager {
 				line = reader.readLine();
 			}
 			if (counter == 0) {
-				System.out.println("Alle TAs sind uptoday. Es wird kein Crash Recovery benötigt!\\n");
+				System.out.println("Alle TAs sind uptoday. Es wird kein Crash Recovery benoetigt!\\n");
 				System.out.println("\n...................");
 			}
 
@@ -407,7 +407,7 @@ public class PersistanceManager {
 	}
 
 	/**
-	 * TODO - Beschreibung ändern return true, wenn LSN > ist als Pagelsn. In diesem
+	 * TODO - Beschreibung Г¤ndern return true, wenn LSN > ist als Pagelsn. In diesem
 	 * Fall muss ein redo gemacht werden.
 	 * 
 	 * returns true if LSN is smaller than PageLsn -> in this case the write action
@@ -442,7 +442,7 @@ public class PersistanceManager {
 			}
 		}
 
-		return (Integer.parseInt(line[1].split("\\:")[1]) < lsn);
+		return (Integer.parseInt(line[1].split(":")[1]) < lsn);
 	}
 
 	/**
@@ -453,10 +453,10 @@ public class PersistanceManager {
 	private void redoWrite(String[] values) {
 
 		FileWriter writer = null;
-		String newLSN = values[1].split("\\:")[1];
-		String ta = values[2].split("\\:")[1];
-		String data = values[3].split("\\:")[1];
-		String pageId = values[4].split("\\:")[1];
+		String newLSN = values[0].split(":")[1];
+		String ta = values[1].split(":")[1];
+		String data = values[2].split(":")[1];
+		String pageId = values[3].split(":")[1];
 
 		try {
 			writer = new FileWriter("Page" + pageId);
@@ -466,7 +466,7 @@ public class PersistanceManager {
 			writer.write("TAID:" + ta + ",");
 			writer.write("Data:" + data);
 
-			System.out.println("REDO: " + "\nPageID, " + pageId + "LSN, " + newLSN + "TAID, " + ta + "Data: " + data
+			System.out.println("REDO: " + "\nPageID " + pageId + ",LSN " + newLSN + ",TAID " + ta + ",Data: " + data
 					+ "\n...................");
 
 		} catch (IOException e) {

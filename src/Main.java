@@ -14,7 +14,7 @@ public class Main {
 		BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
 		int clientsAmount = 1;
 
-		System.out.println("..................");
+		System.out.println("..............................................................................");
 		System.out.print(
 				"Willkomen zu einem DB-Konstruktor. \n\nWie viele Clients sollen erzeugt werden (min 1, max 10)?\n ");
 		try {
@@ -23,9 +23,9 @@ public class Main {
 			System.out.println("........." + clientsAmount + " Clients werden erzeugt und gestartet" + ".........");
 			System.out.println("....................................\n");
 
-			// TODO Recovery auf jeden Fall.
+			// Recovery wird auf jeden Fall ausgefuehrt.
 			System.out.println(
-					".........Überprüfe, ob seit der letzten Anwendung ein Crash Recovery notwendig ist.........");
+					".........Checke, ob seit der letzten Anwendung ein Crash Recovery notwendig ist.........");
 			PersistanceManager.getInstance().crashRecovery();
 
 		} catch (Exception e) {
