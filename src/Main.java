@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 /**
  * Der DB Instruktor erzeugt mehrere Clients, die Transaktionen in unserer lokalen Datenbank (Buffer) auslösen.
- * Die Buffergröße beträgt 5 Commits, danach folt ein Commmit-Force der bereits bestätigten Transaktionen.
+ * Die  Buffergröße beträgt 5 Commits, danach folt ein Commmit-Force der bereits bestätigten Transaktionen.
  */
 
 public class Main {
